@@ -2,14 +2,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
 
-export default function CameraScreen() {
+export default function CameraCapture(props) {
   const [hasPermission, setHasPermission] = useState(null);
+  const [canCapture, setCanCapture] = useState(false);
   const camera = useRef(null);
 
   const takePic = async () => {
-    if(camera.current){
-      let photo = await camera.current.takePictureAsync();
-      console.log('photo', photo);
+    if(camera.current && canCapture){
+      setCanCapture(false);
+
+      let photo = await camera.current.takePictureAsync({
+        base64: true,
+      });
+
+      props.onCaptured(photo);
     }
   }
 
@@ -29,12 +35,19 @@ export default function CameraScreen() {
 
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} type={Camera.Constants.Type.back} ref={camera}>
+      <Camera style={styles.camera} type={Camera.Constants.Type.back} ref={camera} 
+        onCameraReady={()=>{ setCanCapture(true) }}
+      >
         <TouchableOpacity style={styles.shotBtnContainer} onPress={takePic}>
-          <View style={styles.shotBtnOuter}>
-            <View style={styles.shotBtnInner} >
+          {
+            canCapture 
+            ?
+            <View style={styles.shotBtnOuter} >
+              <View style={styles.shotBtnInner} />
             </View>
-          </View>
+            :
+            <Text>Loading ...</Text>
+          }
         </TouchableOpacity>
       </Camera>
     </View>
