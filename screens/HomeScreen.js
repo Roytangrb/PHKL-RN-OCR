@@ -2,18 +2,63 @@ import React, { useState } from 'react';
 import { Image, StyleSheet, View, Button, Modal, Alert } from 'react-native';
 
 import CameraCapture from '../components/CameraCapture';
+import Config from '../config/default';
 
 export default function HomeScreen() {
   const [snapshot, setSnapshot] = useState(null);
   const [cameraModalVisible, setCameraModalVisible] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const snap = () => {
     setSnapshot(null);
+    setSubmitted(false);
     setCameraModalVisible(true);
   }
 
   const submit = () => {
+    if (submitted) {
+      Alert.alert('This photo has been submitted');
+      return;
+    }
 
+    if (!snapshot || !snapshot.base64){
+      Alert.alert('Please snap a photo first');
+      return;
+    }
+
+    const body = JSON.stringify({
+      "requests": [
+        {
+          "image": {
+            "content": "base64-encoded-image"
+          },
+          "features": [
+            {
+              "type": "TEXT_DETECTION"
+            }
+          ]
+        }
+      ]
+    })
+    
+    return fetch("https://vision.googleapis.com/v1/images:annotate?key=" + Config["GOOGLE_CLOUD_VISION_API_KEY"], {
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      method: "POST",
+      body: body
+    })
+      .then(response => response.json())
+      .then(json => {
+        setSubmitted(true);
+        console.log('Fetched Vision API JSON: ', json);
+      })
+      .catch(err => {
+        setSubmitted(false);
+        Alert.alert(err.code + ' - ' + err.message);
+        console.log(err);
+      });
   }
 
   const receiveSnap = (photo) => {
@@ -23,7 +68,7 @@ export default function HomeScreen() {
   }
 
   const getDataUrl = () => {
-    return 'data:image/jpg;base64,' + snapshot?.base64;
+    return 'data:image/jpg;base64,' + snapshot?.base64 ?? '';
   }
 
   return (
@@ -39,10 +84,7 @@ export default function HomeScreen() {
       <Modal
         animationType="slide"
         transparent={false}
-        visible={cameraModalVisible}
-        onDismiss={() => {
-          Alert.alert('Modal has been closed.');
-        }}>
+        visible={cameraModalVisible} >
         <View style={{ marginTop: 22, flex: 1 }}>
           { cameraModalVisible ? <CameraCapture onCaptured={receiveSnap} /> : null }
           <Button
