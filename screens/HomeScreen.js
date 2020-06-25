@@ -32,7 +32,7 @@ export default function HomeScreen() {
       "requests": [
         {
           "image": {
-            "content": "base64-encoded-image"
+            "content": snapshot.base64
           },
           "features": [
             {
@@ -45,7 +45,7 @@ export default function HomeScreen() {
     
     setLoading(true);
 
-    return fetch("https://vision.googleapis.com/v1/images:annotate?key=" + Config["GOOGLE_CLOUD_VISION_API_KEY"], {
+    return fetch("https://vision.googleapis.com/v1/images:annotate?key=" + Config.GOOGLE_CLOUD_VISION_API_KEY, {
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json"
@@ -55,12 +55,14 @@ export default function HomeScreen() {
     })
       .then(response => response.json())
       .then(json => {
-        setSubmitted(true);
         console.log('Fetched Vision API JSON: ', json);
+        if (json.error) throw json.error;
+
+        setSubmitted(true);
       })
       .catch(err => {
         setSubmitted(false);
-        Alert.alert(err.code + ' - ' + err.message);
+        Alert.alert(`Error: ${err.code}\n${err.status}\n${err.message}`);
         console.log(err);
       })
       .finally(() => {
