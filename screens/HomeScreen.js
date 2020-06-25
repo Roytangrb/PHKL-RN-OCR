@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, View, Button, Modal, Alert } from 'react-native';
+import { Image, StyleSheet, View, Button, Modal, Alert, ActivityIndicator } from 'react-native';
 
 import CameraCapture from '../components/CameraCapture';
 import Config from '../config/default';
 
 export default function HomeScreen() {
+  const [loading, setLoading] = useState(false);
   const [snapshot, setSnapshot] = useState(null);
   const [cameraModalVisible, setCameraModalVisible] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -16,6 +17,7 @@ export default function HomeScreen() {
   }
 
   const submit = () => {
+    if (loading) return;
     if (submitted) {
       Alert.alert('This photo has been submitted');
       return;
@@ -41,6 +43,8 @@ export default function HomeScreen() {
       ]
     })
     
+    setLoading(true);
+
     return fetch("https://vision.googleapis.com/v1/images:annotate?key=" + Config["GOOGLE_CLOUD_VISION_API_KEY"], {
       headers: {
         "Accept": "application/json",
@@ -58,6 +62,9 @@ export default function HomeScreen() {
         setSubmitted(false);
         Alert.alert(err.code + ' - ' + err.message);
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }
 
@@ -73,6 +80,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <ActivityIndicator style={styles.loading} size="large" animating={loading} />
       <View style={styles.previewContainer}>
         <Image style={styles.preview} resizeMode="contain" source={{ uri: getDataUrl() }} />
       </View>
@@ -107,13 +115,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  loading: {
+    position: 'absolute',
+    alignSelf: 'center',
+    top: '50%',
+    zIndex: 1,
   },
   previewContainer: {
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 20,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: '#999',
+    marginBottom: 10,
   },
   preview: {
     flex: 1,
@@ -124,6 +144,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    marginBottom: 10,
   }
 });

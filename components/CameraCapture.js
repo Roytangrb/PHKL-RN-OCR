@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, ActivityIndicator, View, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
 
 export default function CameraCapture(props) {
@@ -46,7 +46,7 @@ export default function CameraCapture(props) {
               <View style={styles.shotBtnInner} />
             </View>
             :
-            <Text>Loading ...</Text>
+            <ActivityIndicator animating={true} size="large" />
           }
         </TouchableOpacity>
       </Camera>
