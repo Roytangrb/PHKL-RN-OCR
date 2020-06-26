@@ -13,5 +13,6 @@
 * `yarn start`: start expo server to build and view on expo client app
 
 ### References
-* [Expo with Firebase](https://docs.expo.io/guides/using-firebase/)
 * Google Vision API - [OCR, TEXT_DETECTION](https://cloud.google.com/vision/docs/ocr)
+* [Expo with Firebase](https://docs.expo.io/guides/using-firebase/)
+* [Cloud Firestore](https://firebase.google.com/docs/firestore/quickstart#add_data)
