@@ -3,6 +3,8 @@ import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
 
+import firebase from '../utils/firebase'
+
 export default function HistoryScreen({ navigation }) {
 
   const goToDetail = () => {

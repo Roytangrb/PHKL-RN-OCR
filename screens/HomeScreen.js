@@ -3,6 +3,7 @@ import { Image, StyleSheet, View, Button, Modal, Alert, ActivityIndicator } from
 
 import CameraCapture from '../components/CameraCapture';
 import Config from '../config/default';
+import firebase from '../utils/firebase';
 
 export default function HomeScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
@@ -16,11 +17,23 @@ export default function HomeScreen({ navigation }) {
     setCameraModalVisible(true);
   }
 
-  const goToDetail = (json) => {
-    var result = json?.responses[0];
-    if (result){
-      navigation.navigate("HistoryDetail", { result });
-    }
+  const persist = (json) => {
+    const raw = json?.responses[0];
+    const text = raw?.fullTextAnnotation?.text ?? '';
+
+    return firebase.firestore()
+      .collection('ocr-results').add({
+        text,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+      .then(doc => {
+        console.log("Document written with id: ", doc.id);
+        return { text };
+      })
+  }
+
+  const goToDetail = (result) => {
+    navigation.navigate("HistoryDetail", { result });
   }
 
   const submit = () => {
@@ -68,6 +81,7 @@ export default function HomeScreen({ navigation }) {
         setSubmitted(true);
         return json;
       })
+      .then(persist)
       .then(goToDetail)
       .catch(err => {
         setSubmitted(false);

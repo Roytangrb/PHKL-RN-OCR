@@ -9,8 +9,10 @@ export default function HistoryDetailScreen({ navigation, route }){
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      <MonoTitle style={styles.title}>Timestamp</MonoTitle>
+      <MonoText>{ result?.timestamp }</MonoText>
       <MonoTitle style={styles.title}>Full text annotation</MonoTitle>
-      <MonoText>{ result?.fullTextAnnotation?.text }</MonoText>
+      <MonoText>{ result?.text }</MonoText>
     </ScrollView>
   );
 }
