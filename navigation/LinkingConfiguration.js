@@ -10,5 +10,11 @@ export default {
         History: 'history',
       },
     },
+    HistoryDetail: {
+      path: 'history/detail',
+      screens: {
+        HistoryDetail: 'history-detail'
+      }
+    },
   },
 };

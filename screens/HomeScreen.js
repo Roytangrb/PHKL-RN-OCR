@@ -4,7 +4,7 @@ import { Image, StyleSheet, View, Button, Modal, Alert, ActivityIndicator } from
 import CameraCapture from '../components/CameraCapture';
 import Config from '../config/default';
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [snapshot, setSnapshot] = useState(null);
   const [cameraModalVisible, setCameraModalVisible] = useState(false);
@@ -14,6 +14,13 @@ export default function HomeScreen() {
     setSnapshot(null);
     setSubmitted(false);
     setCameraModalVisible(true);
+  }
+
+  const goToDetail = (json) => {
+    var result = json?.responses[0];
+    if (result){
+      navigation.navigate("HistoryDetail", { result });
+    }
   }
 
   const submit = () => {
@@ -59,7 +66,9 @@ export default function HomeScreen() {
         if (json.error) throw json.error;
 
         setSubmitted(true);
+        return json;
       })
+      .then(goToDetail)
       .catch(err => {
         setSubmitted(false);
         Alert.alert(`Error: ${err.code}\n${err.status}\n${err.message}`);
@@ -73,7 +82,6 @@ export default function HomeScreen() {
   const receiveSnap = (photo) => {
     setSnapshot(photo ?? null);
     setCameraModalVisible(false);
-    console.log(photo);
   }
 
   const getDataUrl = () => {

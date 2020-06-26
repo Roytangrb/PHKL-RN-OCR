@@ -1,28 +1,32 @@
 import { Ionicons } from '@expo/vector-icons';
-import * as WebBrowser from 'expo-web-browser';
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { RectButton, ScrollView } from 'react-native-gesture-handler';
 
-export default function HistoryScreen() {
+export default function HistoryScreen({ navigation }) {
+
+  const goToDetail = () => {
+    navigation.navigate('HistoryDetail', { result: {} });
+  }
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <OptionButton
         icon="md-school"
         label="Read the Expo documentation"
-        onPress={() => WebBrowser.openBrowserAsync('https://docs.expo.io')}
+        onPress={goToDetail}
       />
 
       <OptionButton
         icon="md-compass"
         label="Read the React Navigation documentation"
-        onPress={() => WebBrowser.openBrowserAsync('https://reactnavigation.org')}
+        onPress={goToDetail}
       />
 
       <OptionButton
         icon="ios-chatboxes"
         label="Ask a question on the forums"
-        onPress={() => WebBrowser.openBrowserAsync('https://forums.expo.io')}
+        onPress={goToDetail}
         isLastOption
       />
     </ScrollView>
