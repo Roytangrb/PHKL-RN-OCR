@@ -20,15 +20,18 @@ export default function HomeScreen({ navigation }) {
   const persist = (json) => {
     const raw = json?.responses[0];
     const text = raw?.fullTextAnnotation?.text ?? '';
+    const timestamp = new Date();
 
     return firebase.firestore()
       .collection('ocr-results').add({
         text,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        timestamp,
       })
-      .then(doc => {
-        console.log("Document written with id: ", doc.id);
-        return { text };
+      .then(docRef => {
+        return {
+          text,
+          timestamp: timestamp.toLocaleString(),
+        };
       })
   }
 
@@ -75,7 +78,6 @@ export default function HomeScreen({ navigation }) {
     })
       .then(response => response.json())
       .then(json => {
-        console.log('Fetched Vision API JSON: ', json);
         if (json.error) throw json.error;
 
         setSubmitted(true);

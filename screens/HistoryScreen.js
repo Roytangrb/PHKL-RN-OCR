@@ -1,50 +1,64 @@
-import { Ionicons } from '@expo/vector-icons';
-import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { RectButton, ScrollView } from 'react-native-gesture-handler';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, ActivityIndicator, FlatList } from 'react-native';
+import { RectButton } from 'react-native-gesture-handler';
+import { MonoText, MonoTitle } from '../components/StyledText'
 
 import firebase from '../utils/firebase'
 
 export default function HistoryScreen({ navigation }) {
+  const [loading, setLoading] = useState(true);
+  const [list, setList] = useState([]);
 
-  const goToDetail = () => {
-    navigation.navigate('HistoryDetail', { result: {} });
+  const goToDetail = (result) => {
+    navigation.navigate('HistoryDetail', { result });
   }
 
+  useEffect(() => {
+    const unsubscribe = firebase.firestore()
+      .collection('ocr-results')
+      .orderBy("timestamp", "desc")
+      .limit(3)
+      .onSnapshot(querySnapshot => {
+        const _list = [];
+        querySnapshot.forEach(doc => {
+          const d = doc.data();
+          _list.push({
+            id: doc.id,
+            text: d.text,
+            timestamp: d.timestamp.toDate().toLocaleString()
+          });
+        })
+        
+        setList(_list);
+        setLoading(false);
+      })
+    
+    return () => unsubscribe(); // unsubcribe on unmount clean up
+  }, []);
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <OptionButton
-        icon="md-school"
-        label="Read the Expo documentation"
-        onPress={goToDetail}
+    <View style={styles.container} contentContainerStyle={styles.contentContainer}>
+      <ActivityIndicator style={styles.loading} size="large" animating={loading} />
+      <MonoTitle style={styles.title}>Last 3 Records</MonoTitle>
+      <FlatList
+        data={ list }
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <OptionButton 
+            title={item.timestamp}
+            onPress={() => goToDetail(item)}
+          />
+        )}
       />
-
-      <OptionButton
-        icon="md-compass"
-        label="Read the React Navigation documentation"
-        onPress={goToDetail}
-      />
-
-      <OptionButton
-        icon="ios-chatboxes"
-        label="Ask a question on the forums"
-        onPress={goToDetail}
-        isLastOption
-      />
-    </ScrollView>
+    </View>
   );
 }
 
-function OptionButton({ icon, label, onPress, isLastOption }) {
+function OptionButton({ title, onPress }) {
   return (
-    <RectButton style={[styles.option, isLastOption && styles.lastOption]} onPress={onPress}>
-      <View style={{ flexDirection: 'row' }}>
-        <View style={styles.optionIconContainer}>
-          <Ionicons name={icon} size={22} color="rgba(0,0,0,0.35)" />
-        </View>
-        <View style={styles.optionTextContainer}>
-          <Text style={styles.optionText}>{label}</Text>
-        </View>
+    <RectButton style={styles.option} onPress={onPress}>
+      <View style={styles.optionTextContainer}>
+        <MonoText style={styles.optionText}>{ title }</MonoText>
       </View>
     </RectButton>
   );
@@ -58,19 +72,22 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingTop: 15,
   },
-  optionIconContainer: {
-    marginRight: 12,
+  loading: {
+    position: 'absolute',
+    alignSelf: 'center',
+    top: '50%',
+    zIndex: 1,
+  },
+  title: {
+    paddingTop: 10,
+    paddingHorizontal: 15,
   },
   option: {
     backgroundColor: '#fdfdfd',
     paddingHorizontal: 15,
     paddingVertical: 15,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: 0,
-    borderColor: '#ededed',
-  },
-  lastOption: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: 1,
+    borderColor: '#999',
   },
   optionText: {
     fontSize: 15,
