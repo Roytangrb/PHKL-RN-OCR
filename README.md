@@ -3,6 +3,17 @@
 ## Demo
 * Download Expo Client (Supporting Expo SDK 37) on [iOS](https://apps.apple.com/us/app/expo-client/id982107779) or [Android](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en)
 
+### Android
+* Download the [apk]() `or` view the [published Expo project](https://expo.io/@rubyroy/phkl-rn-ocr) with Expo client app
+  * apk sha256 checksum: ``
+
+### iOS
+* Clone this repo, run `yarn install` or `npm install`
+* Run `yarn start` to start the local dev server
+* Use Expo client app to view the dev build
+
+## Design
+
 ## Developments
 
 ### Requirements
@@ -11,6 +22,7 @@
 
 ### Commands
 * `yarn start`: start expo server to build and view on expo client app
+* `expo publish`: publish to expo host
 
 ### References
 * Google Vision API - [OCR, TEXT_DETECTION](https://cloud.google.com/vision/docs/ocr)
