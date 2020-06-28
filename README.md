@@ -4,13 +4,13 @@
 * Download Expo Client (Supporting Expo SDK 37) on [iOS](https://apps.apple.com/us/app/expo-client/id982107779) or [Android](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en)
 
 ### Android
-* Download the [apk]() `or` view the [published Expo project](https://expo.io/@rubyroy/phkl-rn-ocr) with Expo client app
-  * apk sha256 checksum: ``
+* View the [published Expo project](https://expo.io/@rubyroy/phkl-rn-ocr) with Expo client app
 
 ### iOS
 * Clone this repo, run `yarn install` or `npm install`
 * Run `yarn start` to start the local dev server
 * Use Expo client app to view the dev build
+* ***! app config (Firestore & Api keys) is hidden from this repo***
 
 ## Design
 

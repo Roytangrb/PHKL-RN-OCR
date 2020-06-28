@@ -9,7 +9,7 @@ const Config = {
     appId: "",
     measurementId: ""
   },
-  GOOGLE_CLOUD_VISION_API_KEY: "blabla"
+  GOOGLE_CLOUD_VISION_API_KEY: ""
 }
 
 export default Config
