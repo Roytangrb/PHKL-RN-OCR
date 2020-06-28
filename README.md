@@ -13,6 +13,7 @@
 * ***! app config (Firestore & Api keys) is hidden from this repo***
 
 ## Design
+![](https://github.com/Roytangrb/PHKL-RN-OCR/tree/master/assets/images/data-flow-design.png)
 
 ## Developments
 
